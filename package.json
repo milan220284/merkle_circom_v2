@@ -1,0 +1,38 @@
+{
+  "name": "circom2-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && rollup -c rollup.config.ts",
+    "test": "jest --forceExit",
+    "test:js-bundle": "npm run build && node bundle-test.js",
+    "test:front-env": "parcel front-env/index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@zk-kit/incremental-merkle-tree": "^0.4.3",
+    "circomlib": "^2.0.1",
+    "circomlibjs": "^0.0.8",
+    "ffjavascript": "^0.2.39",
+    "isomorphic-fetch": "^3.0.0",
+    "serve": "^13.0.2",
+    "snarkjs": "^0.4.10",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@types/jest": "^27.0.2",
+    "jest": "^27.3.1",
+    "jest-config": "^27.3.1",
+    "parcel": "^2.0.1",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.58.3",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "ts-jest": "^27.0.7"
+  }
+}
