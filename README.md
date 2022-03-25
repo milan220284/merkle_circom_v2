@@ -1,8 +1,8 @@
-# circom2-example
+# merkle_circom
 
 # Overview
 
-Minimal ts example for working with proofs with circom 2.0.0
+Demo example for ZK Membership Proofs with circom 2.0.0 inspired by https://github.com/akinovak/circom2-example
 
 - The `./scripts` directory includes a build script for the `./circuits/circuit.circom` circuit.
 - The `./src/index.ts` file contains all the helper functions needed for generating and verifying proofs.
@@ -11,6 +11,5 @@ Minimal ts example for working with proofs with circom 2.0.0
 # Startup instructions
 
 1. `npm install`
-2. `cd scripts`
-3. `./scripts/build-circuits.sh`
-4. `npm test` or `npm run test:js-bundle`# merkle_circom_v1
+2.  `./scripts/build-circuits.sh`
+3. `npm test` or `npm run test:js-bundle`
