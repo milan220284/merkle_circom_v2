@@ -55,12 +55,10 @@ template CalculateIdentityCommitment() {
 }
 
 // nLevels must be < 32.
-template Semaphore(nLevels) {
+template Membership(nLevels) {
     signal input secret;
     signal input treePathIndices[nLevels];
     signal input treeSiblings[nLevels];
-
-    // signal input signalHash;
 
     signal output root;
 
@@ -78,5 +76,5 @@ template Semaphore(nLevels) {
     root <== inclusionProof.root;
 }
 
-component main = Semaphore(4);
+component main = Membership(4);
 

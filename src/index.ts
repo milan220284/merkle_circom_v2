@@ -38,21 +38,6 @@ export const genProof = async (grothInput: any, wasmFilePath: string, finalZkeyP
     return { proof, publicSignals };
 }
 
-// public static async genProof(witness: any, wasmFilePath: string, finalZkeyPath: string): Promise<SemaphoreFullProof> {
-//     const { proof, publicSignals } = await groth16.fullProve(witness, wasmFilePath, finalZkeyPath, null)
-
-//     return {
-//       proof,
-//       publicSignals: {
-//         merkleRoot: publicSignals[0],
-//         nullifierHash: publicSignals[1],
-//         signalHash: publicSignals[2],
-//         externalNullifier: publicSignals[3]
-//       }
-//     }
-//   }
-
-
 
 export const verifyProof = (vKey: string, fullProof: any) => {
     const { proof, publicSignals } = fullProof
