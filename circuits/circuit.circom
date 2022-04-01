@@ -46,23 +46,21 @@ template MerkleTreeInclusionProof(nLevels) {
 
 
 template CalculateIdentityCommitment() {
-    signal input secret_1;
-    signal input secret_2;
+    signal input secret;
     
     signal output out;
 
-    component poseidon = Poseidon(2);
+    component poseidon = Poseidon(1);
 
-    poseidon.inputs[0] <== secret_1;
-    poseidon.inputs[1] <== secret_2;
+    poseidon.inputs[0] <== secret;
 
     out <== poseidon.out;
 }
 
 // nLevels must be < 32.
 template Membership(nLevels) {
-    signal input secret_1;
-    signal input secret_2;
+    signal input secret;
+    signal input today;
     signal input treePathIndices[nLevels];
     signal input treeSiblings[nLevels];
 
@@ -70,8 +68,7 @@ template Membership(nLevels) {
     signal output validity;
 
     component calculateIdentityCommitment = CalculateIdentityCommitment();
-    calculateIdentityCommitment.secret_1 <== secret_1;
-    calculateIdentityCommitment.secret_2 <== secret_2;
+    calculateIdentityCommitment.secret <== secret;
     
     component inclusionProof = MerkleTreeInclusionProof(nLevels);
     inclusionProof.leaf <== calculateIdentityCommitment.out;
@@ -82,14 +79,14 @@ template Membership(nLevels) {
     }
 
 
-    component comparator = LessThan(10);
-    comparator.in[0] <== secret_2;
-    comparator.in[1] <== 20;
+    component comparator = LessThan(40);
+    comparator.in[0] <== today;
+    comparator.in[1] <== secret;
 
     validity <== comparator.out;
 
     root <== inclusionProof.root;
 }
 
-component main = Membership(4);
+component main {public [today]}= Membership(3);
 

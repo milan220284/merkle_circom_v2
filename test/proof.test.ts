@@ -10,50 +10,60 @@ import * as path from "path";
 describe('Proof test', () => {
     it("Should create proof", async () => {
 
-        const depth = 4;
-        const numberOfLeaves = 16;
-        const zeroValue = BigInt(0);
+        const depth = 3;
+        // const numberOfLeaves = 8;
+        // const zeroValue = BigInt(0);
+        const zeroValue = poseidon([BigInt('0x' + Buffer.from('X', 'utf-8').toString('hex'))]);
         let tree;
         const arity = 2;
 
+        const data = {
+            id: "CERT-17BB9",
+            dateOfIssuing: 1648806090,
+            dateOfExp: 1648809690,
+            firstName: "Petar",
+            lastName: "Petrović",
+            dateOfBirth: 922808634,
+            placeOfBirth: "Beograd"
+          }
+
+// client tree
         tree = new IncrementalMerkleTree(poseidon, depth, zeroValue, arity);
 
-        for (let i = 0; i < numberOfLeaves; i += 1) {
-            tree.insert(poseidon([i+1, 5]));
-        }
+        tree.insert(poseidon([BigInt('0x' + Buffer.from(data.id, 'utf-8').toString('hex'))]));
+        tree.insert(poseidon([BigInt(data.dateOfIssuing)]));
+        tree.insert(poseidon([data.dateOfExp]));
+        tree.insert(poseidon([BigInt('0x' + Buffer.from(data.firstName,'utf-8').toString('hex'))]));
+        tree.insert(poseidon([BigInt('0x' + Buffer.from(data.lastName, 'utf-8').toString('hex'))]));
+        tree.insert(poseidon([BigInt(data.dateOfBirth)]));
+        tree.insert(poseidon([BigInt('0x' + Buffer.from(data.placeOfBirth, 'utf-8').toString('hex'))]));
 
-        console.log(tree._nodes);
-        console.log('-------------------------------')
+        // console.log(tree._nodes);
+        // console.log('-------------------------------');
 
-        var secret = 2;
+        // var treePathIndices = new Array<number>(depth);
+        // var treeSiblings = new Array<BigInt>(depth);
 
-        var hash = poseidon([secret, 5]);
-        console.log(hash);
-        console.log('**********');
+        // var temp_proof = tree.createProof(2);
 
-        var treePathIndices = new Array<number>(depth);
-        var treeSiblings = new Array<BigInt>(depth);
+        // treePathIndices = temp_proof.pathIndices;
+        // treeSiblings = temp_proof.siblings;
 
-        var temp_proof = tree.createProof(1);
+        // console.log(treePathIndices);
+        // console.log('-------------------------------')
+        // console.log(treeSiblings);
+        // console.log('-------------------------------')
 
-        treePathIndices = temp_proof.pathIndices;
-        treeSiblings = temp_proof.siblings;
+        // console.log(tree.verifyProof(temp_proof, poseidon([data.dateOfExp])));
+        // console.log('-------------------------------')
 
-        console.log(treePathIndices);
-        console.log('-------------------------------')
-        console.log(treeSiblings);
-        console.log('-------------------------------')
-
-        console.log(tree.verifyProof(temp_proof, hash));
-        console.log('-------------------------------')
-
-        const merkleProof = generateMerkleProof(depth, zeroValue, tree._nodes[0], hash);
-        console.log(merkleProof.pathIndices);
-        console.log('-------------------------------')
+        const merkleProof = generateMerkleProof(depth, zeroValue, tree._nodes[0], poseidon([data.dateOfExp]));
+        // console.log(merkleProof.pathIndices);
+        // console.log('-------------------------------')
 
         const witness = {
-            secret_1: secret,
-            secret_2: 5,
+            secret: data.dateOfExp,
+            today: 164880980000,
             treePathIndices: merkleProof.pathIndices,
             treeSiblings: merkleProof.siblings
           }
@@ -64,6 +74,7 @@ describe('Proof test', () => {
 
 
         const fullProof = await genProof(witness, wasmFilePath, finalZkeyPath);
+        // today is public
         console.log(fullProof.publicSignals);
         const vKey = JSON.parse(fs.readFileSync(vkeyPath, "utf-8"))
         const res = await verifyProof(vKey, fullProof); 
