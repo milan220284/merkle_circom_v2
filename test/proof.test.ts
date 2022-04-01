@@ -19,7 +19,7 @@ describe('Proof test', () => {
         tree = new IncrementalMerkleTree(poseidon, depth, zeroValue, arity);
 
         for (let i = 0; i < numberOfLeaves; i += 1) {
-            tree.insert(poseidon([i+1]));
+            tree.insert(poseidon([i+1, 5]));
         }
 
         console.log(tree._nodes);
@@ -27,7 +27,7 @@ describe('Proof test', () => {
 
         var secret = 2;
 
-        var hash = poseidon([secret]);
+        var hash = poseidon([secret, 5]);
         console.log(hash);
         console.log('**********');
 
@@ -52,7 +52,8 @@ describe('Proof test', () => {
         console.log('-------------------------------')
 
         const witness = {
-            secret,
+            secret_1: secret,
+            secret_2: 5,
             treePathIndices: merkleProof.pathIndices,
             treeSiblings: merkleProof.siblings
           }
@@ -63,7 +64,7 @@ describe('Proof test', () => {
 
 
         const fullProof = await genProof(witness, wasmFilePath, finalZkeyPath);
-        console.log(fullProof);
+        console.log(fullProof.publicSignals);
         const vKey = JSON.parse(fs.readFileSync(vkeyPath, "utf-8"))
         const res = await verifyProof(vKey, fullProof); 
 

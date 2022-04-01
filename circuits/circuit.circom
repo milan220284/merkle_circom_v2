@@ -3,6 +3,9 @@ pragma circom 2.0.0;
 include "../node_modules/circomlib/circuits/poseidon.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
 
+include "../node_modules/circomlib/circuits/comparators.circom";
+
+
 
 template MerkleTreeInclusionProof(nLevels) {
     signal input leaf;
@@ -43,27 +46,32 @@ template MerkleTreeInclusionProof(nLevels) {
 
 
 template CalculateIdentityCommitment() {
-    signal input secret;
-
+    signal input secret_1;
+    signal input secret_2;
+    
     signal output out;
 
-    component poseidon = Poseidon(1);
+    component poseidon = Poseidon(2);
 
-    poseidon.inputs[0] <== secret;
+    poseidon.inputs[0] <== secret_1;
+    poseidon.inputs[1] <== secret_2;
 
     out <== poseidon.out;
 }
 
 // nLevels must be < 32.
 template Membership(nLevels) {
-    signal input secret;
+    signal input secret_1;
+    signal input secret_2;
     signal input treePathIndices[nLevels];
     signal input treeSiblings[nLevels];
 
     signal output root;
+    signal output validity;
 
     component calculateIdentityCommitment = CalculateIdentityCommitment();
-    calculateIdentityCommitment.secret <== secret;
+    calculateIdentityCommitment.secret_1 <== secret_1;
+    calculateIdentityCommitment.secret_2 <== secret_2;
     
     component inclusionProof = MerkleTreeInclusionProof(nLevels);
     inclusionProof.leaf <== calculateIdentityCommitment.out;
@@ -72,6 +80,13 @@ template Membership(nLevels) {
         inclusionProof.siblings[i] <== treeSiblings[i];
         inclusionProof.pathIndices[i] <== treePathIndices[i];
     }
+
+
+    component comparator = LessThan(10);
+    comparator.in[0] <== secret_2;
+    comparator.in[1] <== 20;
+
+    validity <== comparator.out;
 
     root <== inclusionProof.root;
 }
